@@ -21,7 +21,17 @@ Copy-Item -Recurse .\examples\hello-python ..\hello-python-demo
   --max-tasks 1 --apply --check-file checks.json
 ```
 
-Substitute any of the four commands to compare the provider combinations.
+Substitute any of the five commands to compare the provider combinations.
+For a Claude-only run with no Ollama dependency:
+
+```sh
+./bin/swarm-claude ../hello-python-demo \
+  --context requirements.md \
+  -g "Implement only greeting.py according to requirements.md" \
+  --max-tasks 1 --apply --check-file checks.json
+```
+
+On Windows, use `.\bin\swarm-claude.cmd` with the same arguments.
 The example verifier is provided with the toolkit and excluded from the model's task.
 It checks empty, ordinary and whitespace-padded names.
 

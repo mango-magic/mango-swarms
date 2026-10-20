@@ -5,18 +5,19 @@ Provider account availability and model outputs vary.
 
 ## Automated checks.
 
-All 23 unit/integration tests passed on macOS/Python 3.9 in 4.806 seconds
-from an isolated copy of the same source. Earlier runs in the original working
-directory encountered a CLI fixture startup timeout; the isolated run completed
-without increasing timeouts. Coverage includes:
+All 25 unit/integration tests passed on macOS/Python 3.9 in 5.202 seconds
+from an isolated copy of the same source after adding Claude-only mode.
+Coverage includes:
 
-- All four actual provider-routing combinations.
+- All five actual provider-routing combinations.
+- Claude-only diagnostics and model configuration with Ollama/Codex initialization forbidden.
+- Dry-run capacity reporting with zero local inference slots for cloud-only modes.
 - Plan/work/review/stage/apply/check lifecycle.
 - Existing-file preservation, backups, changed-file guards and path validation.
 - Cross-process lock release and shared Ollama request serialization.
 - Real subprocess contracts for Codex and Claude using offline fixtures.
 - A real loopback HTTP fixture through the installed-style launcher.
-- Installer output for all four names, including a path containing spaces.
+- Installer output for all five names, including a path containing spaces.
 - Timeout cleanup, cloud opt-in, context budgets and API environment removal.
 
 GitHub Actions runs the suite on Windows, macOS and Linux with Python 3.9 and
@@ -33,7 +34,7 @@ PowerShell and CMD setup entrypoints.
 
 ## Live checks.
 
-On 2026-10-20, all four modes completed the supplied `hello-python` example on
+On 2026-10-20, the original four modes completed the supplied `hello-python` example on
 macOS 26.5, Apple M4 Pro, 24 GB unified memory. Each planned one task, wrote
 `greeting.py`, received a fresh model review, applied it, and passed the
 predefined four-case verifier. Each verifier was also rerun independently.
@@ -44,6 +45,13 @@ predefined four-case verifier. Each verifier was also rerun independently.
 | `swarm-ollama-claude` | Four cases passed | 15.536 s |
 | `swarm-ollama-gpt` | Four cases passed | 17.490 s |
 | `swarm-gpt` | Four cases passed | 17.660 s |
+| `swarm-claude` | Four cases passed | 20.088 s |
+
+The subsequent Claude-only check used Claude Code 2.1.305 with its existing
+subscription login and default model. Its planner, worker and reviewer all used
+Claude in separate requests, followed by the four-case verifier and an
+independent verifier rerun. `--doctor` reported Claude as its only dependency.
+The four existing local launcher files remained byte-for-byte unchanged.
 
 These are single small-task observations, not comparative provider benchmarks.
 The two GPT workflows overlapped. Times exclude startup diagnostics and the
@@ -59,7 +67,8 @@ is not peak process memory or total system usage; peak memory and swap were
 not measured.
 
 Cloud adapters used existing subscription logins and each CLI's default model
-rather than a pinned model ID: Codex `0.163.0-alpha.10.2`, Claude Code `2.1.304`.
+rather than a pinned model ID: Codex `0.163.0-alpha.10.2`, Claude Code `2.1.304`
+for the original hybrid check and `2.1.305` for the later Claude-only check.
 Provider-default models can change. Initial GPT plan attempts exposed a
 task-ID compatibility bug; underscore IDs are now supported and regression
 checked before the successful reruns.

@@ -3,7 +3,7 @@
 [![Portable toolkit checks](https://github.com/mango-magic/mango-swarms/actions/workflows/ci.yml/badge.svg)](https://github.com/mango-magic/mango-swarms/actions/workflows/ci.yml)
 [![Licence: MIT](https://img.shields.io/badge/licence-MIT-F1AB1C?labelColor=111527)](LICENSE)
 
-Four open-source AI workflows in one clone. Each one plans a goal, assigns
+Five open-source AI workflows in one clone. Each one plans a goal, assigns
 independent writing tasks, reviews the results, and stages concrete files.
 Opt in to apply the files and run your own verification commands.
 
@@ -17,18 +17,19 @@ hardware and electricity.
 | `swarm-ollama-claude` | Claude Code | Ollama | Claude Code |
 | `swarm-ollama-gpt` | Codex / GPT | Ollama | Codex / GPT |
 | `swarm-gpt` | Codex / GPT | Codex / GPT | Codex / GPT |
+| `swarm-claude` | Claude Code | Claude Code | Claude Code |
 
 These are separate provider combinations, not renamed copies of one command.
 Each stage makes its own bounded model request. The toolkit owns orchestration;
 it does not rely on an undocumented desktop or Dot API.
 
-The first command is spelled **`swarm-ollama`**. All four names use lowercase
+The first command is spelled **`swarm-ollama`**. All five names use lowercase
 `swarm-`, including the Claude and GPT combinations.
 
-## Clone once. Build all four.
+## Clone once. Build all five.
 
 Requirements: Git and Python 3.9+. The setup creates a local Python environment
-and four launchers. It needs no Python packages or network downloads.
+and five launchers. It needs no Python packages or network downloads.
 
 **macOS / Linux**
 
@@ -59,8 +60,11 @@ downloads a model, or changes global permissions.
   model. The default model is `qwen3:8b`; use `--ollama-model NAME` to select another.
 - GPT modes need the [official Codex CLI](https://developers.openai.com/codex/cli)
   and its existing ChatGPT login.
-- Claude mode needs [Claude Code](https://code.claude.com/docs/en/setup) and an
+- Claude modes need [Claude Code](https://code.claude.com/docs/en/setup) and an
   existing Claude subscription login.
+
+`swarm-claude` uses Claude Code for every stage. It requires neither Ollama nor
+Codex. Run `./bin/swarm-claude --doctor` to check only its Claude dependency.
 
 See [setup and authentication](docs/setup.md) for platform details.
 
@@ -78,6 +82,9 @@ See [setup and authentication](docs/setup.md) for platform details.
 
 ./bin/swarm-gpt ./my-project \
   -g "Create a small CSV validation utility with usage documentation"
+
+./bin/swarm-claude ./my-project \
+  --context requirements.md -g "Implement the specified small Python module"
 ```
 
 On Windows, use `.\bin\<command>.cmd`. The arguments are the same.

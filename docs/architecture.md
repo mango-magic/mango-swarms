@@ -20,6 +20,11 @@ read-only sandboxing, disabled tools/plugins and existing ChatGPT authentication
 Claude uses its documented print/JSON-schema interface with tools disabled and
 safe mode. No vendor binaries are bundled.
 
+`swarm-claude` selects the Claude adapter for all three roles. Each stage is a
+separate tool-free, nonpersistent CLI request; the reviewer does not reuse a
+worker conversation. Only Claude is initialized or checked, with no Ollama or
+Codex dependency. Its dry-run reports zero local inference slots.
+
 Each worker has a separate task prompt. The reviewer sees all proposed text in
 a fresh request and can reject the result. The orchestrator validates result
 shape and portable paths, then stages text artifacts. It does not execute

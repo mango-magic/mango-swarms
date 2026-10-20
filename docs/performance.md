@@ -23,7 +23,7 @@ and other open applications matter more than parameter count alone.
 | Local 12B-14B Q4 model | 1 experimental | 1 shared | 4K-8K; verify memory first |
 | Local 30B-32B Q4 model | 0 until fit is verified | At most 1 in this toolkit | Not a default with normal apps open |
 | Ollama workers + Claude/GPT planner | 1-2 | 1 shared | 8K local |
-| GPT-only | 1-2 | 0 | Provider-managed |
+| Claude-only or GPT-only | 1-2 | 0 | Provider-managed |
 
 For 4K context, reduce `--output-tokens` and selected context accordingly.
 The wrapper default is 8K because planning and review need room for instructions,
@@ -51,7 +51,7 @@ installed digest. A 20 GB model download leaves little room on a 24 GB machine
 for context, runtime buffers and normal applications.
 
 The toolkit supports `-n 1` through `-n 8` worker slots per run. That is a
-software configuration range, **not a measured capacity rating**. For GPT-only,
+software configuration range, **not a measured capacity rating**. For cloud-only modes,
 start at two workers; account quotas and provider latency usually govern scaling
 before model-weight RAM does. For mixed modes, start at two workers and one or
 two workflows; the Ollama gate still allows one local request at a time.
@@ -98,7 +98,7 @@ with a cloud-backed tag may execute remotely even though its API endpoint is
 `--allow-ollama-cloud`.
 
 Mixed modes send selected context to their Claude/GPT planner and reviewer.
-GPT-only uses remote inference for every stage. Their model weights do not sit
+Claude-only and GPT-only use remote inference for every stage. Their model weights do not sit
 in your Mac's RAM; network reliability, provider quotas and existing account
 usage settings still apply. Cloud inference and paid extra usage are not free
 because the wrapper is MIT-licensed.

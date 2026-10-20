@@ -1,4 +1,4 @@
-"""Command-line interface shared by four distinct provider combinations."""
+"""Command-line interface shared by five distinct provider combinations."""
 
 import argparse
 import json
@@ -99,10 +99,11 @@ def main(argv=None):
     args = parser().parse_args(argv)
     home = state_home()
     if args.dry_run:
+        uses_ollama = "ollama" in MODES[args.mode]
         print(json.dumps({"brand": "MangoMagic", "mode": args.mode,
                           "stages": dict(zip(("planner", "worker", "reviewer"), MODES[args.mode])),
-                          "worker_slots": args.workers, "shared_ollama_requests": 1,
-                          "num_ctx": args.num_ctx, "apply": args.apply,
+                          "worker_slots": args.workers, "shared_ollama_requests": int(uses_ollama),
+                          "num_ctx": args.num_ctx if uses_ollama else None, "apply": args.apply,
                           "state_home": str(home), "model_requests": 0}, indent=2))
         return 0
     providers = make_providers(args, home)

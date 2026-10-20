@@ -28,6 +28,7 @@ jobs:
         run: |
           bash install.sh
           ./bin/swarm-gpt --dry-run
+          ./bin/swarm-claude --dry-run
       - name: Documented Windows setup
         if: runner.os == 'Windows'
         shell: powershell
@@ -37,4 +38,6 @@ jobs:
           .\install.cmd
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\bin\swarm-gpt.cmd --dry-run
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\bin\swarm-claude.cmd --dry-run
           exit $LASTEXITCODE

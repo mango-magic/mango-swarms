@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,7 @@ import tempfile
 import threading
 import time
 import unittest
+from contextlib import redirect_stdout
 from unittest.mock import patch
 
 from mango_swarms import cli, providers, workflow
@@ -19,6 +21,13 @@ from mango_swarms.runtime import (FileLock, SwarmError, apply_artifacts, digest,
 
 
 ROOT = Path(__file__).resolve().parents[1]
+EXPECTED_ROUTES = {
+    "swarm-ollama": ("ollama", "ollama", "ollama"),
+    "swarm-ollama-claude": ("claude", "ollama", "claude"),
+    "swarm-ollama-gpt": ("codex", "ollama", "codex"),
+    "swarm-gpt": ("codex", "codex", "codex"),
+    "swarm-claude": ("claude", "claude", "claude"),
+}
 
 
 def response_for(schema, prompt=""):
@@ -65,8 +74,9 @@ class ToolkitTests(unittest.TestCase):
     def fake_providers(self):
         return {name: FixtureProvider(name) for name in ("ollama", "codex", "claude")}
 
-    def test_all_four_routes_use_distinct_planner_worker_reviewer_providers(self):
-        for mode, route in workflow.MODES.items():
+    def test_all_five_routes_use_expected_planner_worker_reviewer_providers(self):
+        self.assertEqual(set(workflow.MODES), set(EXPECTED_ROUTES))
+        for mode, route in EXPECTED_ROUTES.items():
             with self.subTest(mode=mode):
                 adapters = self.fake_providers()
                 code, run = workflow.execute(self.args(mode), adapters, self.home, emit=lambda _: None)
@@ -80,6 +90,31 @@ class ToolkitTests(unittest.TestCase):
                 self.assertEqual(sum(len(p.calls) for p in adapters.values()), 4)
                 self.assertEqual(json.loads((run / "report.json").read_text())["status"], "staged")
                 self.assertFalse((self.workspace / "alpha.txt").exists())
+
+    def test_claude_only_doctor_requires_no_ollama_or_codex(self):
+        output = io.StringIO()
+        with patch("mango_swarms.cli.Claude", return_value=FixtureProvider("claude")) as claude, \
+                patch("mango_swarms.cli.Ollama", side_effect=AssertionError("Ollama must not initialize")), \
+                patch("mango_swarms.cli.Codex", side_effect=AssertionError("Codex must not initialize")), \
+                patch.dict(os.environ, {"MANGO_CLAUDE_MODEL": "selected-claude-model"}), \
+                redirect_stdout(output):
+            self.assertEqual(cli.main(["swarm-claude", "--doctor"]), 0)
+        claude.assert_called_once_with("selected-claude-model", 300)
+        report = json.loads(output.getvalue())
+        self.assertEqual(report["providers"], [{"provider": "claude", "fixture": True}])
+        self.assertEqual(report["generation_requests"], 0)
+
+    def test_dry_run_reports_local_capacity_only_for_ollama_routes(self):
+        for mode, route in EXPECTED_ROUTES.items():
+            output = io.StringIO()
+            with self.subTest(mode=mode), redirect_stdout(output), \
+                    patch("mango_swarms.cli.make_providers", side_effect=AssertionError("No provider calls")):
+                self.assertEqual(cli.main([mode, "--dry-run"]), 0)
+            report = json.loads(output.getvalue())
+            self.assertEqual(tuple(report["stages"].values()), route)
+            self.assertEqual(report["shared_ollama_requests"], int("ollama" in route))
+            self.assertEqual(report["num_ctx"], 8192 if "ollama" in route else None)
+            self.assertEqual(report["model_requests"], 0)
 
     def test_apply_and_user_authored_check_run_end_to_end(self):
         (self.workspace / "checks.json").write_text(json.dumps([
@@ -244,7 +279,7 @@ class ToolkitTests(unittest.TestCase):
                 patch("mango_swarms.providers.shutil.which", return_value="node.exe"):
             self.assertEqual(providers.find_cli("codex"), ["node.exe", str(entry.resolve())])
 
-    def test_installer_builds_all_four_commands_and_preserves_unrelated_files(self):
+    def test_installer_builds_all_five_commands_and_preserves_unrelated_files(self):
         clone = self.root / "clone with spaces"
         shutil.copytree(ROOT / "mango_swarms", clone / "mango_swarms",
                         ignore=shutil.ignore_patterns("__pycache__"))
@@ -254,7 +289,7 @@ class ToolkitTests(unittest.TestCase):
         setup = subprocess.run([sys.executable, str(clone / "scripts/install.py")],
                                capture_output=True, text=True, timeout=30)
         self.assertEqual(setup.returncode, 0, setup.stderr)
-        for name in workflow.MODES:
+        for name in EXPECTED_ROUTES:
             command = clone / "bin" / (name + (".cmd" if os.name == "nt" else ""))
             argv = ["cmd.exe", "/d", "/c", str(command), "--dry-run"] if os.name == "nt" else [
                 str(command), "--dry-run"]

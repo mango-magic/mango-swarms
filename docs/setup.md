@@ -1,6 +1,6 @@
 # Setup and authentication.
 
-The installer builds all four command names inside this clone's `bin/` directory.
+The installer builds all five command names inside this clone's `bin/` directory.
 It creates `.venv/` using the selected Python interpreter without pip or external
 packages. It does not edit PATH, shell profiles, login settings or other programs.
 Keep the clone: the launchers use its code. Moving a clone on the same OS retains
@@ -54,6 +54,13 @@ reuse the Windows `.venv`.
 WSL is an option, not a requirement.
 
 ## Provider preparation.
+
+For Claude-only use, run `./bin/swarm-claude --doctor` on macOS/Linux or
+`.\bin\swarm-claude.cmd --doctor` on Windows. This checks Claude Code only;
+Ollama, local model weights and Codex are not required. `--claude-model NAME`
+or `MANGO_CLAUDE_MODEL` selects the model for its planner, workers and reviewer.
+Omit the option to use the Claude CLI default. The stages consume the existing
+Claude subscription allowance and send the selected task data to Claude.
 
 | Provider | Required action by you | Cost boundary |
 | --- | --- | --- |

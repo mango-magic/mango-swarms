@@ -18,6 +18,7 @@ MODES = {
     "swarm-ollama-claude": ("claude", "ollama", "claude"),
     "swarm-ollama-gpt": ("codex", "ollama", "codex"),
     "swarm-gpt": ("codex", "codex", "codex"),
+    "swarm-claude": ("claude", "claude", "claude"),
 }
 
 
