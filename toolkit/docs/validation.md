@@ -25,8 +25,10 @@ GitHub Actions runs the suite on Windows, macOS and Linux with Python 3.9 and
 3.13. CI uses synthetic fixtures and does not require provider credentials.
 Check the [Actions history](https://github.com/mango-magic/mango-swarms/actions/workflows/ci.yml)
 for the specific commit; a configured matrix is not evidence of successful
-Windows execution. Native Windows/Linux validation of this folder migration
-is pending.
+Windows execution. The [reorganisation CI run](https://github.com/mango-magic/mango-swarms/actions/runs/39508750771)
+passed all six OS/Python combinations at commit `cf9914d`, including the 26-test
+suite, documentation/source audits and installation of all five commands.
+Both Windows setup entrypoints passed their native runner checks.
 
 The [initial published CI run](https://github.com/mango-magic/mango-swarms/actions/runs/39414347905)
 passed all six OS/Python combinations, including Windows `.cmd` launchers and
@@ -46,8 +48,11 @@ Documentation checks cover 35 Markdown files, 354 local file/anchor links,
 five modes. All 200 recipe argument sets and 17 documented launcher commands
 were parsed against the real CLI. These are structural checks, not evidence
 that all 200 tasks have succeeded with models. The reviewed source audit
-passed for 59 text files; visual review covered light/dark desktop and
-390/320-pixel mobile layouts using a local GitHub-style preview.
+passed for 59 text files. A fresh public clone of `cf9914d` installed and
+ran all five commands with zero model requests, then passed both audits.
+Visual review covered light/dark desktop and 390/320-pixel mobile layouts
+locally. The published GitHub page also loaded the desktop and 390-pixel
+mobile heroes correctly; the catalogue and recipe anchors were verified live.
 
 ## Live checks.
 
