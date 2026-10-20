@@ -1,6 +1,6 @@
 # Setup and authentication.
 
-The installer builds all five command names inside this clone's `bin/` directory.
+The installer builds all five command names inside this clone's `toolkit/bin/` directory.
 It creates `.venv/` using the selected Python interpreter without pip or external
 packages. It does not edit PATH, shell profiles, login settings or other programs.
 Keep the clone: the launchers use its code. Moving a clone on the same OS retains
@@ -9,7 +9,7 @@ changing Python or operating systems.
 
 ## macOS.
 
-Install Git and Python 3.9+ if absent. Run `bash install.sh` from the clone.
+Install Git and Python 3.9+ if absent. Open `toolkit/` inside the clone and run `bash install.sh`.
 The bundled Codex CLI inside ChatGPT/Codex is recognised as a fallback when
 `codex` is not on PATH. Ollama must already be running.
 
@@ -29,7 +29,7 @@ the version explicit. The installer never replaces a user-level command.
 
 ## Windows.
 
-Install Python 3.9+ and Git. Run `.\install.ps1`, `.\install.cmd`, or
+Install Python 3.9+ and Git. Open `toolkit/` inside the clone. Run `.\install.cmd`, `.\install.ps1`, or
 `py -3 scripts/install.py`. No administrator account or execution-policy change
 is needed. PowerShell 5.1+ is sufficient for the setup script.
 
@@ -138,3 +138,5 @@ Official references:
 [Codex authentication](https://developers.openai.com/codex/auth),
 [Claude setup](https://code.claude.com/docs/en/setup), and
 [Claude authentication](https://code.claude.com/docs/en/authentication).
+
+For an older clone, follow the [folder-layout upgrade notes](../README.md#updating-an-older-clone).

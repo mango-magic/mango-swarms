@@ -303,6 +303,45 @@ class ToolkitTests(unittest.TestCase):
         self.assertEqual(command.read_text(), "user work")
 
 
+    def test_nested_toolkit_relocation_and_reinstall_preserve_state_and_user_files(self):
+        repository = self.root / "repository with spaces"
+        toolkit = repository / "toolkit"
+        shutil.copytree(ROOT / "mango_swarms", toolkit / "mango_swarms",
+                        ignore=shutil.ignore_patterns("__pycache__"))
+        shutil.copy(ROOT / "launch.py", toolkit / "launch.py")
+        (toolkit / "scripts").mkdir()
+        shutil.copy(ROOT / "scripts/install.py", toolkit / "scripts/install.py")
+        (repository / "README.md").write_text("repository overview")
+        self.home.mkdir()
+        sentinel = self.home / "existing-user-state.txt"
+        sentinel.write_text("keep saved state")
+        environment = dict(os.environ, MANGO_SWARMS_HOME=str(self.home),
+                           MANGO_CLAUDE_MODEL="user-selection")
+        subprocess.run([sys.executable, str(toolkit / "scripts/install.py")],
+                       env=environment, check=True, capture_output=True, timeout=30)
+        notes = toolkit / "bin" / "personal-notes.txt"
+        notes.write_text("unrelated user file")
+        relocated = self.root / "relocated repository with spaces"
+        shutil.move(str(repository), relocated)
+        toolkit = relocated / "toolkit"
+        subprocess.run([sys.executable, str(toolkit / "scripts/install.py")],
+                       env=environment, check=True, capture_output=True, timeout=30)
+        for name, route in EXPECTED_ROUTES.items():
+            command = toolkit / "bin" / (name + (".cmd" if os.name == "nt" else ""))
+            argv = ["cmd.exe", "/d", "/c", str(command), "--dry-run"] if os.name == "nt" else [
+                str(command), "--dry-run"]
+            result = subprocess.run(argv, env=environment, cwd=relocated,
+                                    capture_output=True, text=True, timeout=15)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            report = json.loads(result.stdout)
+            self.assertEqual(tuple(report["stages"].values()), route)
+            self.assertEqual(Path(report["state_home"]), self.home.resolve())
+            self.assertEqual(report["model_requests"], 0)
+        self.assertEqual(sentinel.read_text(), "keep saved state")
+        self.assertEqual((toolkit / "bin/personal-notes.txt").read_text(), "unrelated user file")
+        self.assertEqual((relocated / "README.md").read_text(), "repository overview")
+
+
 class HTTPIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="mango-http-")

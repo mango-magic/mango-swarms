@@ -5,8 +5,8 @@ Provider account availability and model outputs vary.
 
 ## Automated checks.
 
-All 25 unit/integration tests passed on macOS/Python 3.9 in 5.202 seconds
-from an isolated copy of the same source after adding Claude-only mode.
+All 26 unit/integration tests passed on macOS/Python 3.9 in 6.165 seconds
+from an isolated copy after the `toolkit/` and `use-cases/` folder migration.
 Coverage includes:
 
 - All five actual provider-routing combinations.
@@ -18,12 +18,15 @@ Coverage includes:
 - Real subprocess contracts for Codex and Claude using offline fixtures.
 - A real loopback HTTP fixture through the installed-style launcher.
 - Installer output for all five names, including a path containing spaces.
+- Moving and reinstalling a nested toolkit while preserving private state and unrelated files.
 - Timeout cleanup, cloud opt-in, context budgets and API environment removal.
 
 GitHub Actions runs the suite on Windows, macOS and Linux with Python 3.9 and
 3.13. CI uses synthetic fixtures and does not require provider credentials.
-The workflow badge links to the actual current run; a configured matrix is not
-itself evidence of successful Windows execution.
+Check the [Actions history](https://github.com/mango-magic/mango-swarms/actions/workflows/ci.yml)
+for the specific commit; a configured matrix is not evidence of successful
+Windows execution. Native Windows/Linux validation of this folder migration
+is pending.
 
 The [initial published CI run](https://github.com/mango-magic/mango-swarms/actions/runs/39414347905)
 passed all six OS/Python combinations, including Windows `.cmd` launchers and
@@ -31,6 +34,20 @@ the shared lock tests. A fresh public clone on the test Mac also completed
 `bash install.sh`, ran all four installed commands with `--dry-run`, and passed
 the public-source audit. CI additionally exercises the documented shell,
 PowerShell and CMD setup entrypoints.
+
+The reorganised toolkit was also installed in the existing Mac checkout and
+all five generated commands passed `--dry-run`, with zero model requests. The
+provider/runtime modules and all three platform install entrypoints are
+byte-identical to the previous release apart from their location. The state
+location, configuration variables and provider login handling are unchanged.
+
+Documentation checks cover 35 Markdown files, 354 local file/anchor links,
+200 unique catalogue IDs/titles/prompts, all required recipe fields and all
+five modes. All 200 recipe argument sets and 17 documented launcher commands
+were parsed against the real CLI. These are structural checks, not evidence
+that all 200 tasks have succeeded with models. The reviewed source audit
+passed for 59 text files; visual review covered light/dark desktop and
+390/320-pixel mobile layouts using a local GitHub-style preview.
 
 ## Live checks.
 

@@ -4,9 +4,13 @@ Use Python 3.9+ and the standard library. Keep provider integrations explicit,
 preserve existing files, and avoid automatic paid fallbacks or permission
 bypasses.
 
+Run from the repository root:
+
 ```sh
+cd toolkit
 python3 -m unittest discover -s tests -v
 python3 -m compileall -q mango_swarms scripts launch.py
+python3 scripts/check_docs.py
 python3 scripts/audit_public.py
 ```
 

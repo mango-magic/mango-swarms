@@ -1,11 +1,11 @@
 # Small goals. Clear checks.
 
-Start in a new folder so generated artifacts cannot collide with existing work.
+Run commands from `toolkit/`. Start in a new folder so generated artifacts cannot collide with existing work.
 Copy the `hello-python` example to a working directory outside the toolkit:
 
 ```sh
-cp -R examples/hello-python ../hello-python-demo
-./bin/swarm-ollama ../hello-python-demo \
+cp -R examples/hello-python ../../hello-python-demo
+./bin/swarm-ollama ../../hello-python-demo \
   --context requirements.md \
   -g "Implement only greeting.py according to requirements.md" \
   --max-tasks 1 --apply --check-file checks.json
@@ -14,8 +14,8 @@ cp -R examples/hello-python ../hello-python-demo
 Windows PowerShell:
 
 ```powershell
-Copy-Item -Recurse .\examples\hello-python ..\hello-python-demo
-.\bin\swarm-ollama.cmd ..\hello-python-demo `
+Copy-Item -Recurse .\examples\hello-python ..\..\hello-python-demo
+.\bin\swarm-ollama.cmd ..\..\hello-python-demo `
   --context requirements.md `
   -g "Implement only greeting.py according to requirements.md" `
   --max-tasks 1 --apply --check-file checks.json
@@ -25,7 +25,7 @@ Substitute any of the five commands to compare the provider combinations.
 For a Claude-only run with no Ollama dependency:
 
 ```sh
-./bin/swarm-claude ../hello-python-demo \
+./bin/swarm-claude ../../hello-python-demo \
   --context requirements.md \
   -g "Implement only greeting.py according to requirements.md" \
   --max-tasks 1 --apply --check-file checks.json

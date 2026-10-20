@@ -7,7 +7,7 @@ import re
 import subprocess
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 FORBIDDEN_PARTS = {".venv", "runtime", "benchmarks", "test-output", "__pycache__",
                    ".mango-swarms", ".ssh", ".aws"}
 PATTERNS = {

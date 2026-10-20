@@ -12,6 +12,9 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python: ['3.9', '3.13']
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: toolkit
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
@@ -21,14 +24,17 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Compile source
         run: python -m compileall -q mango_swarms scripts launch.py
+      - name: Documentation and 200-use-case library checks
+        run: python scripts/check_docs.py
       - name: Public source audit
         run: python scripts/audit_public.py
       - name: Documented macOS and Linux setup
         if: runner.os != 'Windows'
         run: |
           bash install.sh
-          ./bin/swarm-gpt --dry-run
-          ./bin/swarm-claude --dry-run
+          for mode in swarm-ollama swarm-ollama-claude swarm-ollama-gpt swarm-gpt swarm-claude; do
+            "./bin/$mode" --dry-run
+          done
       - name: Documented Windows setup
         if: runner.os == 'Windows'
         shell: powershell
@@ -37,7 +43,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\install.cmd
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          .\bin\swarm-gpt.cmd --dry-run
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          .\bin\swarm-claude.cmd --dry-run
-          exit $LASTEXITCODE
+          foreach ($mode in @("swarm-ollama", "swarm-ollama-claude", "swarm-ollama-gpt", "swarm-gpt", "swarm-claude")) {
+            & ".\bin\$mode.cmd" --dry-run
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
