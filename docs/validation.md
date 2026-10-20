@@ -24,6 +24,13 @@ GitHub Actions runs the suite on Windows, macOS and Linux with Python 3.9 and
 The workflow badge links to the actual current run; a configured matrix is not
 itself evidence of successful Windows execution.
 
+The [initial published CI run](https://github.com/mango-magic/mango-swarms/actions/runs/39414347905)
+passed all six OS/Python combinations, including Windows `.cmd` launchers and
+the shared lock tests. A fresh public clone on the test Mac also completed
+`bash install.sh`, ran all four installed commands with `--dry-run`, and passed
+the public-source audit. CI additionally exercises the documented shell,
+PowerShell and CMD setup entrypoints.
+
 ## Live checks.
 
 On 2026-10-20, all four modes completed the supplied `hello-python` example on
