@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="440" viewBox="0 0 1280 440" role="img" aria-labelledby="title desc">
+  <title id="title">MangoMagic Swarms.</title>
+  <desc id="desc">Four open-source workflows. Choose your models. Keep the evidence.</desc>
+  <rect width="1280" height="440" fill="#F6F0E2"/>
+  <rect x="52" y="55" width="1176" height="330" fill="#111527"/>
+  <rect x="52" y="55" width="9" height="330" fill="#F1AB1C"/>
+  <text x="94" y="112" fill="#F1AB1C" font-family="Montserrat, sans-serif" font-size="17" font-weight="700">M A N G O M A G I C   ·   O P E N   S O U R C E</text>
+  <text x="90" y="224" fill="#F6F0E2" font-family="Playfair Display, Georgia, serif" font-size="90">Swarms.</text>
+  <text x="94" y="285" fill="#F6F0E2" font-family="Playfair Display, Georgia, serif" font-style="italic" font-size="30">Choose your models. Keep the evidence.</text>
+  <text x="96" y="346" fill="#F1AB1C" font-family="Montserrat, sans-serif" font-size="15" font-weight="700">O L L A M A   ·   C L A U D E   ·   G P T</text>
+</svg>
